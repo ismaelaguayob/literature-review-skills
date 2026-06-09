@@ -1,0 +1,76 @@
+project:
+  name: AI Sovereignty
+  slug: ai-sovereignty
+  description: Literature review on AI sovereignty, digital sovereignty, and operationalization for ILIA-style analysis
+  bib_path: AI sovereignty.bib
+
+paths:
+  sources_dir: sources
+  machine_dir: machine-readable/markitdown
+  retrieval_intermediate_dir: outputs/retrieval/intermediate
+  retrieval_curated_dir: outputs/retrieval/curated
+  analysis_intermediate_dir: outputs/analysis/intermediate
+  analysis_curated_dir: outputs/analysis/curated
+  keyword_ledger: literature-keywords.yaml
+
+retrieval:
+  from_year: 2019
+  default_limit: 10
+  user_agent: ai-sovereignty-lit-review/0.1
+  core_terms:
+    - AI sovereignty
+    - artificial intelligence sovereignty
+    - digital sovereignty
+    - compute sovereignty
+    - data sovereignty
+    - algorithmic sovereignty
+    - AI agency
+    - strategic autonomy
+    - technological sovereignty
+  modifier_terms:
+    - indicator
+    - index
+    - measurement
+    - typology
+    - framework
+    - maturity
+    - capability
+    - capacity
+    - dependency
+    - infrastructure
+    - governance
+    - Latin America
+    - Global South
+  default_queries:
+    - AI sovereignty measurement
+    - artificial intelligence sovereignty indicators
+    - digital sovereignty conceptual framework
+    - compute sovereignty AI infrastructure
+    - AI agency capability power measurement
+    - strategic autonomy artificial intelligence governance
+    - data sovereignty artificial intelligence Latin America
+
+synthesis:
+  lens_name: ILIA operationalization
+  use_measurement_lens: true
+  curated_title: AI Sovereignty and ILIA Operationalization
+  category_dimensions:
+    - source_type
+    - thematic_category
+    - sovereignty_type
+    - stack_layer
+    - measurement_approach
+    - regional_focus
+  intermediate_sections:
+    - Thesis
+    - Key Concepts and Definitions
+    - Categories Suggested by This Source
+    - Mechanisms, Arguments, or Findings
+    - Tensions and Trade-offs
+    - Evidence and Traceable Notes
+    - Implications for ILIA or Measurement
+    - Open Questions
+  findings_sections:
+    - Thesis
+    - Categories Suggested by This Source
+    - Implications for ILIA or Measurement

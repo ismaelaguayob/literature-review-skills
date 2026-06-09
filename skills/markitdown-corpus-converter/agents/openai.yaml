@@ -1,0 +1,4 @@
+interface:
+  display_name: "MarkItDown Corpus Converter"
+  short_description: "Convert corpus files to Markdown"
+  default_prompt: "Use $markitdown-corpus-converter to convert the project corpus to machine-readable Markdown."

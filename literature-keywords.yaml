@@ -1,0 +1,12 @@
+project_slug: literature-review
+updated_at:
+
+active: []
+candidates: []
+rejected: []
+
+query_templates:
+  - "{core_term} measurement"
+  - "{core_term} indicators"
+  - "{core_term} conceptual framework"
+  - "{core_term} literature review"

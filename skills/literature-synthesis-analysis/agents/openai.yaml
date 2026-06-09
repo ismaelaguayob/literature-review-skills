@@ -1,0 +1,4 @@
+interface:
+  display_name: "Literature Synthesis Analysis"
+  short_description: "Synthesize sources into traceable findings"
+  default_prompt: "Use $literature-synthesis-analysis to synthesize the corpus into traceable findings, emergent categories, and a curated literature review."

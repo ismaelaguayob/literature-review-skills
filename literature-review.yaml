@@ -1,0 +1,119 @@
+project:
+  name: Literature Review
+  slug: literature-review
+  description: Reusable literature review workflow
+  bib_path: references.bib
+
+paths:
+  sources_dir: sources
+  machine_dir: machine-readable/markitdown
+  retrieval_intermediate_dir: outputs/retrieval/intermediate
+  retrieval_curated_dir: outputs/retrieval/curated
+  analysis_intermediate_dir: outputs/analysis/intermediate
+  analysis_curated_dir: outputs/analysis/curated
+  keyword_ledger: literature-keywords.yaml
+  review_state_dir: review-state
+
+retrieval:
+  from_year: 2019
+  to_year:
+  default_limit: 10
+  user_agent: literature-review/0.1
+  sources:
+    enabled:
+      - openalex
+      - semantic-scholar
+      - core
+      - springer-metadata
+      - springer-openaccess
+      - crossref
+    targeted:
+      - arxiv
+  core_terms: []
+  modifier_terms:
+    - indicator
+    - index
+    - measurement
+    - measure
+    - typology
+    - framework
+    - maturity
+    - capability
+    - capacity
+    - dependency
+    - infrastructure
+    - governance
+  exclusion_terms: []
+  default_queries: []
+  keyword_suggestion_limit: 30
+
+apis:
+  openalex:
+    min_interval_seconds: 0.2
+    retries: 4
+    cache: true
+  semantic_scholar:
+    min_interval_seconds: 1.0
+    retries: 4
+    throttle_scope: project
+    cache: true
+  crossref:
+    min_interval_seconds: 0.5
+    retries: 4
+    cache: true
+  springer:
+    metadata_api_key_env: SPRINGER_METADATA_API_KEY
+    openaccess_api_key_env: SPRINGER_OPENACCESS_API_KEY
+    min_interval_seconds: 1.0
+    retries: 4
+    cache: true
+  core:
+    api_key_env: CORE_API_KEY
+    min_interval_seconds: 1.0
+    retries: 4
+    cache: true
+  openrouter:
+    api_key_env: OPENROUTER_API_KEY
+    base_url: https://openrouter.ai/api/v1
+    min_interval_seconds: 3.0
+    retries: 3
+    cache: true
+
+synthesis:
+  mode: direct_llm
+  lens_name: General literature synthesis
+  use_measurement_lens: true
+  curated_title: Curated Synthesis
+  category_dimensions:
+    - source_type
+    - thematic_category
+    - methodological_approach
+    - measurement_approach
+  intermediate_sections:
+    - Thesis
+    - Key Concepts and Definitions
+    - Categories Suggested by This Source
+    - Mechanisms, Arguments, or Findings
+    - Tensions and Trade-offs
+    - Evidence and Traceable Notes
+    - Implications for the Review
+    - Open Questions
+  findings_sections:
+    - Thesis
+    - Categories Suggested by This Source
+    - Implications for the Review
+  source_llm:
+    provider: openrouter
+    model: google/gemini-3.5-flash
+    temperature: 0
+    max_output_tokens: 6000
+    output_mode: json_schema
+    workers: 4
+    requests_per_minute: 20
+    retries: 3
+    retry_delay_seconds: 10
+    max_input_chars: 120000
+    split_long_sources: true
+    min_evidence_notes: 4
+    require_trace_links: true
+    require_semantic_audit: true
