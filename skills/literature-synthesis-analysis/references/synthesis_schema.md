@@ -107,7 +107,9 @@ Every source must appear in the outlook state. A source may belong to multiple c
 
 ## Narrative Review
 
-Use `outputs/analysis/curated/narrative-review.qmd` for the final publishable product. This should be a scholarly narrative in English, not a robotic report. It should answer the questions and objectives in `review-state/research-brief.md`, use the corpus outlook as an organizing map, cite claims with BibTeX keys, and include a generated bibliography through Quarto/Pandoc.
+Use `outputs/analysis/curated/narrative-review.qmd` for the final publishable product. This should be a scholarly narrative in English, not a robotic report. It should answer the questions and objectives in `review-state/research-brief.md`, use the corpus outlook as an organizing map, cite claims with exact BibTeX keys, and include a generated bibliography through Quarto/Pandoc.
+
+A strong first draft should make an explicit argument. It should introduce the research problem, clarify the central concepts, map the corpus through emergent categories, synthesize mechanisms and tensions across sources, and translate the findings into implications for the configured research task. Use source syntheses as compressed evidence, but deep-dive into machine-readable sources for pivotal claims or weak traces.
 
 Quarto/Pandoc citation syntax:
 
@@ -118,6 +120,8 @@ Digital sovereignty debates often frame infrastructure and regulatory capacity a
 
 Several sources converge on this point [@example2024; @another2022].
 ```
+
+Do not write narrative citations as `[@example2024] argues that ...`; Quarto treats bracketed citations as parenthetical. In prose, use the bare key form: `@example2024 argues that ...`.
 
 ## Category Practice
 

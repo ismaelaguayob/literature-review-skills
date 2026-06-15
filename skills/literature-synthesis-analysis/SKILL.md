@@ -21,6 +21,7 @@ When adapting project configuration or when the user shares a working hypothesis
 8. Use `.agents/skills/literature-synthesis-analysis/scripts/make_curation_workspace.py` to create the curation workspace: `review-state/research-brief.md`, `review-state/corpus-outlook.yaml`, `outputs/analysis/curated/corpus-outlook.md`, and `outputs/analysis/curated/narrative-review.qmd`.
 9. Build the corpus outlook first. It must classify every source as included, peripheral, discarded, or uncategorized; a source may have multiple thematic, methodological, evidence, source-type, and research-use categories. Do not delete irrelevant sources; keep them in the discarded/irrelevant group with a rationale.
 10. Write the final narrative review as a publishable English Quarto/Markdown paper. Use the outlook and validated source syntheses as the main substrate, but deep-dive into machine-readable sources when a source is important, a summary is shallow, or trace support is suspicious.
+11. Before finalizing the narrative review, verify that every cited BibTeX key exists in the configured `.bib` file and that narrative citations use Quarto syntax correctly.
 
 ## Direct LLM Source Synthesis
 
@@ -53,9 +54,9 @@ The curation phase has two products:
 1. `corpus-outlook`: a systematic research map for navigating the corpus by emergent categories, themes, methods, evidence/data types, source types, geographies, and research uses. It should be useful even before the final paper exists.
 2. `narrative-review.qmd`: a publishable, human-written scholarly narrative in English that answers the research questions and objectives in `review-state/research-brief.md`.
 
-Use Quarto/Pandoc citation syntax in the final paper: `[@bibkey]` for parenthetical citations, `@bibkey` for narrative citations, and `[@key1; @key2]` for multiple citations. The QMD frontmatter should point to the configured BibTeX file so citations and bibliography render automatically.
+Use Quarto/Pandoc citation syntax in the final paper. Parenthetical citations use brackets: `... [@bibkey]`. Narrative citations use bare keys in prose: `@roberts_digital_2024 argues that ...`, never `[@roberts_digital_2024] argues that ...`. Multiple parenthetical citations use semicolons: `... [@key1; @key2]`. The QMD frontmatter should point to the configured BibTeX file so citations and bibliography render automatically.
 
-Avoid writing the final paper like a report. Prefer connected prose, explicit argument, careful transitions, and citations that support the claims. Do not overuse bullet lists, formulaic contrasts, or repetitive scaffolding language.
+Avoid writing the final paper like a report. Prefer connected prose, an explicit thesis, careful transitions, and citations that support the claims. A strong first draft should move from the research problem to conceptual clarification, then to the corpus map, cross-source mechanisms/tensions, implications for the configured research task, limitations, and conclusion. Do not overuse bullet lists, formulaic contrasts, or repetitive scaffolding language.
 
 ## Traceability
 

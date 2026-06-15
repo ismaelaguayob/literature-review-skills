@@ -30,20 +30,20 @@ You need:
 - Zotero.
 - Better BibTeX for Zotero.
 - Quarto, for rendering final `.qmd` narrative reviews with BibTeX citations.
-- Python packages used by the scripts, especially `pyyaml` and `markitdown`.
+- Python packages used by the scripts, especially `pyyaml`, `markitdown`, `openai`, and `httpx`.
 
 Install the Python dependencies in the project environment:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install pyyaml markitdown
+pip install pyyaml markitdown openai httpx
 ```
 
 If you use `uv`, the equivalent is:
 
 ```bash
-uv pip install pyyaml markitdown
+uv pip install pyyaml markitdown openai httpx
 ```
 
 Install Quarto through your operating system package manager or from the Quarto distribution, then verify:
@@ -166,7 +166,7 @@ The taxonomy should emerge during synthesis. Use `synthesis.category_dimensions`
 
 For large corpora, use the direct LLM runner to create one structured JSON and one traceable Markdown synthesis per source group or long-source segment. OpenRouter is configured under `apis.openrouter` and `synthesis.source_llm`; cache and rate limiting are enabled from the start. The old Codex sub-agent runner is kept only under `deprecated/` and is not installed into consuming projects.
 
-The final narrative review should be written as a publishable English Quarto document. Use BibTeX keys directly in Markdown/Quarto, for example `[@smith2024]`, `@smith2024`, or `[@smith2024; @lee2023]`; Quarto/Pandoc will render citations and the bibliography from the configured `.bib` file.
+The final narrative review should be written as a publishable English Quarto document. Use BibTeX keys directly in Markdown/Quarto: parenthetical citations look like `... [@smith2024]`, narrative citations look like `@smith2024 argues that ...`, and multiple parenthetical citations look like `... [@smith2024; @lee2023]`. Quarto/Pandoc will render citations and the bibliography from the configured `.bib` file.
 
 Review the curated synthesis outputs substantively. The corpus outlook, source summaries, and narrative review should be checked against the research brief and, when necessary, against the machine-readable source text. This toolkit is a research assistant for organizing evidence and drafting arguments; it is not an automation system for generating knowledge without scholarly review.
 

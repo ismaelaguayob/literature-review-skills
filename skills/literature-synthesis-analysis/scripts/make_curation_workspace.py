@@ -168,33 +168,74 @@ def relative_bib_path(qmd_path: Path) -> str:
 
 
 def render_narrative_qmd(qmd_path: Path) -> str:
-    title = PROJECT_CONFIG.get("synthesis", {}).get("curated_title") or PROJECT_CONFIG.get("project", {}).get("name", "Narrative Review")
+    title = (
+        PROJECT_CONFIG.get("synthesis", {}).get("paper_title")
+        or PROJECT_CONFIG.get("synthesis", {}).get("curated_title")
+        or PROJECT_CONFIG.get("project", {}).get("name", "Narrative Review")
+    )
     bibliography = relative_bib_path(qmd_path)
     return f"""---
 title: "{title}"
 format:
   html:
+    theme: journal
     toc: true
     toc-depth: 3
     number-sections: true
+    comments:
+      hypothesis: true
+    title-block-banner: true
 bibliography: "{bibliography}"
+execute:
+  warning: false
+  message: false
 ---
+
+<!--
+Drafting instructions for the principal agent:
+
+- Write a publishable scholarly narrative in English, not a bullet-heavy report.
+- Answer the questions, objectives, and hypotheses in `review-state/research-brief.md`.
+- Use `review-state/corpus-outlook.yaml` and `outputs/analysis/curated/corpus-outlook.md` as the systematic map of the corpus.
+- Use source-level syntheses as compressed evidence, but deep-dive into machine-readable sources for pivotal claims, shallow summaries, or suspicious traces.
+- Make the argument explicit: define the problem, organize the literature into emergent categories, synthesize mechanisms and tensions, and explain implications for the configured research task.
+- Use exact BibTeX keys from `{bibliography}`.
+- Quarto narrative citations use bare keys in prose: `@roberts_digital_2024 argues that ...`.
+- Quarto parenthetical citations use brackets: `... [@roberts_digital_2024]`.
+- Multiple parenthetical citations use semicolons: `... [@key1; @key2]`.
+-->
 
 # Introduction
 
-# Research Objectives and Questions
+State the central research problem, the paper's thesis, and why the review matters. Do not merely describe the corpus.
+
+# Conceptual Framework
+
+Develop the main concepts, distinctions, and debates that structure the review. Use narrative citations when naming specific authors or sources in prose.
 
 # Corpus and Method
 
+Explain the scope of the corpus, source types, inclusion logic, and how the systematic outlook was produced. Keep this concise and transparent.
+
 # Mapping the Literature
 
-# Findings
+Organize sources by emergent themes, source types, methods, evidence types, geographies, or research uses. Every central category should be traceable to the curated outlook.
 
-# Implications
+# Synthesis and Argument
+
+Develop the main findings as connected prose. Compare literatures, identify convergences and tensions, and make explicit what the corpus allows the paper to claim.
+
+# Implications for the Research Task
+
+Translate the synthesis into implications for the configured research objective, measurement task, policy question, theoretical contribution, or empirical design.
 
 # Limitations and Future Research
 
+Name corpus limitations, ambiguous evidence, discarded/peripheral areas, and questions that require further reading or empirical work.
+
 # Conclusion
+
+Return to the paper's thesis and state the review's contribution.
 
 # References
 """
@@ -217,6 +258,12 @@ def research_brief_text() -> str:
 ## Exclusion Criteria
 
 ## Notes for the Final Narrative
+
+- Write the final narrative as a publishable English Quarto paper, not as a robotic report.
+- Use exact BibTeX keys from the configured `.bib` file.
+- Narrative citations in Quarto use bare keys in prose, for example: `@roberts_digital_2024 argues that ...`.
+- Parenthetical citations use brackets, for example: `... [@roberts_digital_2024]`.
+- Multiple parenthetical citations use semicolons, for example: `... [@key1; @key2]`.
 """
 
 

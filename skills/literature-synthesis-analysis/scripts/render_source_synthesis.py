@@ -119,7 +119,7 @@ def render_file(path: Path, output_dir: Path) -> Path:
     stem = path.stem
     if stem.endswith(".source"):
         stem = stem[: -len(".source")]
-    output_path = output_dir / f"{slugify(stem)}.md"
+    output_path = output_dir / f"{slugify(stem, max_length=160)}.md"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(render_markdown(data), encoding="utf-8")
     return output_path

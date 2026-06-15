@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -24,7 +25,16 @@ PROJECT_ROOT = Path.cwd()
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from shared.api_utils import load_env, request_json  # noqa: E402
+from shared.api_utils import (  # noqa: E402
+    cache_enabled,
+    cache_key,
+    load_env,
+    min_interval_for,
+    read_cached_json,
+    retries_for,
+    throttle,
+    write_cached_json,
+)
 
 
 DEFAULT_RUN_ROOT = Path(PROJECT_CONFIG["paths"]["analysis_intermediate_dir"])
@@ -234,6 +244,72 @@ def parse_json_content(content: str) -> dict[str, Any]:
     return json.loads(content)
 
 
+def request_openrouter_compatible_json(
+    base_url: str,
+    *,
+    provider: str,
+    config: dict[str, Any],
+    api_key: str,
+    headers: dict[str, str],
+    body: dict[str, Any],
+    timeout: int = 180,
+) -> dict[str, Any]:
+    """Request an OpenAI-compatible chat completion with local cache and throttling."""
+    try:
+        import httpx
+        from openai import OpenAI
+    except ImportError as exc:
+        raise RuntimeError(
+            "Missing Python dependencies for direct LLM synthesis. Install them with: "
+            "pip install openai httpx"
+        ) from exc
+
+    endpoint = f"{base_url.rstrip('/')}/chat/completions"
+    request_payload = {
+        "method": "POST",
+        "url": endpoint,
+        "body": body,
+    }
+    key = cache_key(request_payload)
+    use_cache = cache_enabled(config, provider)
+    if use_cache:
+        cached = read_cached_json(provider, key)
+        if isinstance(cached, dict):
+            return cached
+
+    retries = max(1, retries_for(config, provider))
+    min_interval = min_interval_for(config, provider)
+    provider_cfg = config.get("apis", {}).get(provider, {}) if isinstance(config.get("apis", {}), dict) else {}
+    verify_ssl = bool(provider_cfg.get("verify_ssl", False))
+    extra_headers = {
+        key: value
+        for key, value in headers.items()
+        if key.lower() not in {"authorization", "content-type"} and value
+    }
+    last_error: Exception | None = None
+    for attempt in range(retries):
+        throttle(provider, min_interval)
+        try:
+            with httpx.Client(verify=verify_ssl, timeout=timeout) as http_client:
+                client = OpenAI(
+                    api_key=api_key,
+                    base_url=base_url.rstrip("/"),
+                    default_headers=extra_headers,
+                    http_client=http_client,
+                )
+                response = client.chat.completions.create(**body)
+                data = response.model_dump(mode="json")
+                if use_cache:
+                    write_cached_json(provider, key, data)
+                return data
+        except Exception as exc:  # noqa: BLE001 - SDK wraps provider/rate errors heterogeneously.
+            last_error = exc
+            if attempt >= retries - 1:
+                break
+            time.sleep(float(2**attempt))
+    raise RuntimeError(f"Failed OpenRouter-compatible request after {retries} attempts: {last_error}")
+
+
 def call_openrouter(group: SourceGroup, output_json: Path, max_chars: int, dry_run: bool) -> dict[str, Any]:
     cfg = source_llm_config()
     provider = cfg.get("provider", "openrouter")
@@ -270,11 +346,11 @@ def call_openrouter(group: SourceGroup, output_json: Path, max_chars: int, dry_r
     fmt = response_format(str(cfg.get("output_mode", "json_schema")))
     if fmt:
         body["response_format"] = fmt
-    data = request_json(
-        f"{base_url}/chat/completions",
+    data = request_openrouter_compatible_json(
+        base_url,
         provider=provider,
         config=configured_runtime(PROJECT_CONFIG),
-        method="POST",
+        api_key=api_key,
         headers=headers,
         body=body,
         timeout=180,
@@ -327,8 +403,24 @@ def main() -> int:
         results = [run_one(group, json_dir, markdown_dir, max_chars, True) for group in groups]
     else:
         with futures.ThreadPoolExecutor(max_workers=workers) as executor:
-            submitted = [executor.submit(run_one, group, json_dir, markdown_dir, max_chars, False) for group in groups]
-            results = [job.result() for job in futures.as_completed(submitted)]
+            submitted = {
+                executor.submit(run_one, group, json_dir, markdown_dir, max_chars, False): group
+                for group in groups
+            }
+            results = []
+            for job in futures.as_completed(submitted):
+                group = submitted[job]
+                try:
+                    results.append(job.result())
+                except Exception as exc:  # noqa: BLE001 - keep long runs moving and report failed groups.
+                    results.append(
+                        {
+                            "group_id": group.group_id,
+                            "title": group.title,
+                            "error": type(exc).__name__,
+                            "message": str(exc),
+                        }
+                    )
             results.sort(key=lambda row: row.get("group_id", ""))
     manifest = {
         "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
@@ -337,6 +429,7 @@ def main() -> int:
         "model": cfg.get("model"),
         "dry_run": args.dry_run,
         "machine_dirs": [path.as_posix() for path in machine_dirs],
+        "failures": sum(1 for row in results if row.get("error")),
         "results": results,
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")

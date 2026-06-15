@@ -40,3 +40,19 @@ Do not invent bibliographic metadata. Use:
 - `bib_entry_type`
 - source metadata block in machine-readable files
 - the configured BibTeX file
+
+## Quarto / Pandoc Citations
+
+Final narrative reviews are written as `.qmd` files and should use exact BibTeX keys from the configured `.bib` file.
+
+Examples:
+
+```markdown
+Parenthetical citation: The literature frames sovereignty as relational capacity [@roberts_digital_2024].
+
+Narrative citation: @roberts_digital_2024 argues that sovereignty depends on institutional and infrastructural conditions.
+
+Multiple parenthetical citations: This point appears across several debates [@roberts_digital_2024; @example2025].
+```
+
+Do not write narrative citations as `[@roberts_digital_2024] argues that ...`. Brackets create a parenthetical citation; narrative citations must use the bare key form in prose.

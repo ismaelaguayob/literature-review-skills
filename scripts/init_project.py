@@ -73,6 +73,12 @@ def research_brief_text(name: str) -> str:
 ## Exclusion Criteria
 
 ## Notes for the Final Narrative
+
+- Write the final narrative as a publishable English Quarto paper, not as a robotic report.
+- Use exact BibTeX keys from the configured `.bib` file.
+- Narrative citations in Quarto use bare keys in prose, for example: `@roberts_digital_2024 argues that ...`.
+- Parenthetical citations use brackets, for example: `... [@roberts_digital_2024]`.
+- Multiple parenthetical citations use semicolons, for example: `... [@key1; @key2]`.
 """
 
 
